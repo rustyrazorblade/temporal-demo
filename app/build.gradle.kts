@@ -25,6 +25,7 @@ dependencies {
 
     implementation("io.temporal:temporal-sdk:1.25.1")
     implementation("org.jline:jline:3.25.0")
+    implementation("com.google.inject:guice:7.0.0")
 }
 
 testing {

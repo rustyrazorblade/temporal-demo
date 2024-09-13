@@ -6,5 +6,5 @@ import io.temporal.workflow.WorkflowMethod
 @WorkflowInterface
 interface TestWorkflow {
     @WorkflowMethod
-    fun starCoolWorkflow(data: WorkflowData)
+    fun starCoolWorkflow(data: WorkflowData): Int
 }

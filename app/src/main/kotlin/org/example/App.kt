@@ -5,12 +5,14 @@ package org.example
 
 import io.temporal.client.WorkflowClient
 import io.temporal.client.WorkflowOptions
+import io.temporal.client.WorkflowStub
 
 import io.temporal.serviceclient.WorkflowServiceStubs
 import io.temporal.worker.WorkerFactory
 import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.Terminal
 import org.jline.terminal.TerminalBuilder
+import java.util.concurrent.TimeUnit
 
 class App {
     val greeting: String
@@ -19,40 +21,44 @@ class App {
         }
 }
 
-fun main() {
+fun main(args: Array<String>) {
+
     val service = WorkflowServiceStubs.newLocalServiceStubs()
     val client = WorkflowClient.newInstance(service)
-    val factory = WorkerFactory.newInstance(client)
 
-    val worker = factory.newWorker("test")
-    worker.registerWorkflowImplementationTypes(TestWorkflowImpl::class.java)
-    worker.registerActivitiesImplementations(MyActivitiesImpl::class.java)
-    factory.start()
+    val workflowOptions = WorkflowOptions.newBuilder()
+        .setTaskQueue(Shared.DEMO_TASK_QUEUE)
+        .setWorkflowId("monkey2").build()
 
 
-    val terminal: Terminal = TerminalBuilder.builder().build()
-    val reader = LineReaderBuilder.builder().terminal(terminal).build()
-    println("Starting up the app")
+    val line = args.getOrElse(0) {
+        "DEFAULT"
+    }
 
-    println("Enter a string")
-    val line = reader.readLine()
-
-    println("Enter a number")
-    val line2 = reader.readLine()
-
-    println("Starting with $line and $line2")
+    println("Starting with $line")
 
     // create a workflow
-    val workflowOptions = WorkflowOptions.newBuilder()
-        .setTaskQueue("the-queue")
-        .setWorkflowId("monkey").build()
 
     val workflow = client.newWorkflowStub(TestWorkflow::class.java, workflowOptions)
 
     val data = WorkflowDataImpl(line)
 
     val instance = WorkflowClient.start(workflow::starCoolWorkflow, data)
-    println(instance.workflowId)
+    println("instance: ${instance.workflowId}")
+
+    val untyped = WorkflowStub.fromTyped(workflow)
+
+    for(i in 0..10) {
+        try {
+            val result = untyped.getResult(1, TimeUnit.SECONDS, Int::class.java)
+            println("RESULT? $result")
+            break
+        } catch (e: Exception) {
+            println("OH NO MY SILLY GOOSE $e")
+        }
+    }
+    println("Done")
+
 
     // the workflow is going to create a bunch of activities, and it will take at least a minute to run
     // so we're going to create it then monitor it

@@ -1,6 +1,8 @@
 package org.example
 
-class WorkflowDataImpl(private val something: String) : WorkflowData {
+import com.fasterxml.jackson.annotation.JsonProperty
+
+class WorkflowDataImpl(@JsonProperty("something") private val something: String) : WorkflowData {
     override fun getSomething(): String {
         return something
     }
