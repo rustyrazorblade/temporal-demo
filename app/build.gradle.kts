@@ -26,6 +26,7 @@ dependencies {
     implementation("io.temporal:temporal-sdk:1.25.1")
     implementation("org.jline:jline:3.25.0")
     implementation("com.google.inject:guice:7.0.0")
+    implementation("org.apache.sshd:sshd-core:2.12.1")
 }
 
 testing {
@@ -48,4 +49,14 @@ java {
 application {
     // Define the main class for the application.
     mainClass = "org.example.AppKt"
+}
+
+// add a gradle task that runs Worker.kt
+tasks {
+    register<JavaExec>("runWorker") {
+        group = "application"
+        description = "Runs the Kotlin application in the submodule"
+        classpath = sourceSets["main"].runtimeClasspath
+        mainClass.set("org.example.WorkerKt")
+    }
 }
