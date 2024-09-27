@@ -4,6 +4,7 @@
 package org.example
 
 import io.temporal.client.WorkflowClient
+import io.temporal.client.WorkflowClientOptions
 import io.temporal.client.WorkflowOptions
 import io.temporal.client.WorkflowStub
 
@@ -24,7 +25,12 @@ class App {
 fun main(args: Array<String>) {
 
     val service = WorkflowServiceStubs.newLocalServiceStubs()
-    val client = WorkflowClient.newInstance(service)
+
+    val clientOptions = WorkflowClientOptions.newBuilder()
+        .setNamespace("default")
+        .build()
+
+    val client = WorkflowClient.newInstance(service, clientOptions)
 
     val workflowOptions = WorkflowOptions.newBuilder()
         .setTaskQueue(Shared.DEMO_TASK_QUEUE)
