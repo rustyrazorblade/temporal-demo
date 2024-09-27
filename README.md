@@ -9,7 +9,7 @@ Set environment variables for the containers:
 ```shell
 export CASSANDRA_VERSION=latest
 export TEMPORAL_UI_VERSION=latest
-export ELASTICSEARCH_VERSION=8.15.2
+export ELASTICSEARCH_VERSION=7.17.24
 export TEMPORAL_VERSION=latest
 export TEMPORAL_ADMINTOOLS_VERSION=latest
 ```
