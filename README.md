@@ -14,6 +14,12 @@ export TEMPORAL_VERSION=latest
 export TEMPORAL_ADMINTOOLS_VERSION=latest
 ```
 
+## Build the Jar
+
+```shell
+gw shadowjar
+```
+
 Bring up the environment:
 
 ```shell
