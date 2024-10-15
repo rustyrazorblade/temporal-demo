@@ -26,6 +26,12 @@ Bring up the environment:
 docker compose up
 ```
 
+Run the worker:
+
+```shell
+./gradlew run
+```
+
 ## Test the Services 
 
 The services are all started as a bridge, so the ports that are exposed are exposed to the host.
@@ -54,16 +60,12 @@ http://localhost:8080/
 http://localhost:8000/metrics
 
 
-Run the worker:
 
-```shell
-
-```
 
 Run the app:
 
 ```shell
-
+./gradlew run
 ```
 
 ## Table Structure

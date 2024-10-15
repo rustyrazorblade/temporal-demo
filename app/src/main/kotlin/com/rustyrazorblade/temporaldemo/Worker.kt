@@ -45,7 +45,16 @@ fun main() {
     worker.registerActivitiesImplementations(MyActivitiesImpl())
     worker.registerActivitiesImplementations(RollingRestartActivitiesImpl())
     println("Starting Worker")
-    factory.start()
+    for (i in 0..10) {
+        try {
+            println("Starting worker")
+            factory.start()
+            break
+        } catch (e: Exception) {
+            println("Error starting worker: $e")
+            Thread.sleep(5000)
+        }
+    }
     println("Stared, running")
 }
 

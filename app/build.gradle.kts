@@ -48,7 +48,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "org.example.AppKt"
+    mainClass = "com.rustyrazorblade.temporaldemo.AppKt"
 }
 
 // add a gradle task that runs Worker.kt
