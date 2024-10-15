@@ -9,7 +9,7 @@
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     alias(libs.plugins.jvm)
-
+    id("com.gradleup.shadow") version "8.3.3"
     // Apply the application plugin to add support for building a CLI application in Java.
     application
 }

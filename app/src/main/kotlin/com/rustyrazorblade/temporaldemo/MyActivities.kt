@@ -1,4 +1,4 @@
-package org.example
+package com.rustyrazorblade.temporaldemo
 
 import io.temporal.activity.ActivityInterface
 import io.temporal.activity.ActivityMethod

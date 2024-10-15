@@ -1,11 +1,11 @@
-package org.example
+package com.rustyrazorblade.temporaldemo
 
 import io.temporal.client.WorkflowClient
 import io.temporal.client.WorkflowClientOptions
 import io.temporal.serviceclient.WorkflowServiceStubs
 import io.temporal.worker.WorkerFactory
-import org.example.ecl.RollingRestartActivitiesImpl
-import org.example.ecl.RollingRestartWorkflowImpl
+import com.rustyrazorblade.temporaldemo.ecl.RollingRestartActivitiesImpl
+import com.rustyrazorblade.temporaldemo.ecl.RollingRestartWorkflowImpl
 
 fun main() {
 
@@ -34,7 +34,6 @@ fun main() {
 
 
     val factory = WorkerFactory.newInstance(client)
-
 
     val worker = factory.newWorker(Shared.DEMO_TASK_QUEUE)
 

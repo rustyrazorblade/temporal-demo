@@ -1,4 +1,4 @@
-package org.example
+package com.rustyrazorblade.temporaldemo
 
 class MyActivitiesImpl : MyActivities {
     override fun doSomething(s: String): String {

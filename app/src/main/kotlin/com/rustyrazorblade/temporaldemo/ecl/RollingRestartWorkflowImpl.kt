@@ -1,4 +1,4 @@
-package org.example.ecl
+package com.rustyrazorblade.temporaldemo.ecl
 
 import io.temporal.activity.ActivityOptions
 import io.temporal.workflow.Workflow

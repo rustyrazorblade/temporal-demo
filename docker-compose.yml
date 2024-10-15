@@ -67,16 +67,16 @@ services:
       - temporal-network
     ports:
       - 8080:8080
-  worker:
+  temporal-worker:
     container_name: temporal-worker
     depends_on:
       - temporal
-    image: amazoncorretto:11-alpine
+    image: amazoncorretto:17-alpine
     networks:
       - temporal-network
     volumes:
       - ./:/app
-    command: ["java", "-jar", "/app/app/build/libs/app.jar"]
+    command: ["java", "-cp", "/app/app/build/libs/app-all.jar", "com.rustyrazorblade.temporaldemo.WorkerKt"]
 networks:
   temporal-network:
     driver: bridge

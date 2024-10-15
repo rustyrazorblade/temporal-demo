@@ -1,4 +1,4 @@
-package org.example.ecl
+package com.rustyrazorblade.temporaldemo.ecl
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

@@ -1,4 +1,4 @@
-package org.example.ecl
+package com.rustyrazorblade.temporaldemo.ecl
 
 import org.apache.sshd.client.SshClient
 import org.apache.sshd.client.session.ClientSession
