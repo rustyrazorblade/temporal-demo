@@ -60,3 +60,20 @@ Run the app:
 
 ```
 
+## Table Structure
+
+Temporal creates the following tables in Cassandra:
+
+```shell
+cqlsh:temporal> desc tables;
+
+cluster_membership     namespaces        queues
+cluster_metadata       namespaces_by_id  schema_update_history
+cluster_metadata_info  nexus_endpoints   schema_version
+executions             queue             task_queue_user_data
+history_node           queue_messages    tasks
+history_tree           queue_metadata
+```
+
+
+### 

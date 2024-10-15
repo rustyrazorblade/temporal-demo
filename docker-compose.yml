@@ -67,6 +67,16 @@ services:
       - temporal-network
     ports:
       - 8080:8080
+  worker:
+    container_name: temporal-worker
+    depends_on:
+      - temporal
+    image: amazoncorretto:11-alpine
+    networks:
+      - temporal-network
+    volumes:
+      - ./:/app
+    command: ["java", "-jar", "/app/app/build/libs/app.jar"]
 networks:
   temporal-network:
     driver: bridge
