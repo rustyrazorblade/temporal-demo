@@ -27,6 +27,7 @@ dependencies {
     implementation("org.jline:jline:3.25.0")
     implementation("com.google.inject:guice:7.0.0")
     implementation("org.apache.sshd:sshd-core:2.12.1")
+    implementation("com.beust:jcommander:1.82")
 }
 
 testing {

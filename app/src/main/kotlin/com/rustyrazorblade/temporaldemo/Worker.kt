@@ -32,7 +32,6 @@ fun main() {
 
     val client = WorkflowClient.newInstance(service, options)
 
-
     val factory = WorkerFactory.newInstance(client)
 
     val worker = factory.newWorker(Shared.DEMO_TASK_QUEUE)

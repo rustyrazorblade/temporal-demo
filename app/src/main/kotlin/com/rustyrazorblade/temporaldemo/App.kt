@@ -9,10 +9,6 @@ import io.temporal.client.WorkflowOptions
 import io.temporal.client.WorkflowStub
 
 import io.temporal.serviceclient.WorkflowServiceStubs
-import io.temporal.worker.WorkerFactory
-import org.jline.reader.LineReaderBuilder
-import org.jline.terminal.Terminal
-import org.jline.terminal.TerminalBuilder
 import java.util.concurrent.TimeUnit
 
 class App {
@@ -23,17 +19,22 @@ class App {
 }
 
 fun main(args: Array<String>) {
-
+    // Create an instance that connects to a Temporal Service running on the local
+    // machine, using the default port (7233)
+    // This doesn't connect yet, we need the options as well.
     val service = WorkflowServiceStubs.newLocalServiceStubs()
 
+    // Initialize the client options.
     val clientOptions = WorkflowClientOptions.newBuilder()
         .setNamespace("default")
         .build()
 
+    // Create the actual client instance, but it connects lazily.
     val client = WorkflowClient.newInstance(service, clientOptions)
 
+    // The workflowId is a uniqueness constraint.
     val workflowOptions = WorkflowOptions.newBuilder()
-        .setTaskQueue(com.rustyrazorblade.temporaldemo.Shared.DEMO_TASK_QUEUE)
+        .setTaskQueue(Shared.DEMO_TASK_QUEUE)
         .setWorkflowId("monkey2").build()
 
 
@@ -43,11 +44,12 @@ fun main(args: Array<String>) {
 
     println("Starting with $line")
 
-    // create a workflow
+    // Create a workflow.  This is not reusable.
+    val workflow = client.newWorkflowStub(TestWorkflow::class.java, workflowOptions)
 
-    val workflow = client.newWorkflowStub(com.rustyrazorblade.temporaldemo.TestWorkflow::class.java, workflowOptions)
-
-    val data = com.rustyrazorblade.temporaldemo.WorkflowDataImpl(line)
+    // The data object we're going to use in our workflow.
+    // Best practice is we use an object because
+    val data = WorkflowDataImpl(line)
 
     val instance = WorkflowClient.start(workflow::starCoolWorkflow, data)
     println("instance: ${instance.workflowId}")

@@ -26,7 +26,7 @@ Bring up the environment:
 docker compose up
 ```
 
-Run the worker:
+Run the demo app:
 
 ```shell
 ./gradlew run
@@ -34,7 +34,7 @@ Run the worker:
 
 ## Test the Services 
 
-The services are all started as a bridge, so the ports that are exposed are exposed to the host.
+The services are all started as a bridge, so the ports that are used are also exposed to the host.
 
 ### Cassandra
 
