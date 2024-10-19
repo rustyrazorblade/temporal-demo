@@ -60,7 +60,7 @@ tasks {
         group = "application"
         description = "Runs the Kotlin application in the submodule"
         classpath = sourceSets["main"].runtimeClasspath
-        mainClass.set("org.example.WorkerKt")
+        mainClass.set("com.rustyrazorblade.temporaldemo.WorkerKt")
     }
 }
 

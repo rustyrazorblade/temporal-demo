@@ -6,3 +6,5 @@ build
 
 # Ignore intellij files
 .idea
+
+.kotlin

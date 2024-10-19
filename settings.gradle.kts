@@ -13,3 +13,4 @@ plugins {
 
 rootProject.name = "temporal-jon-demo"
 include("app")
+include("codec-server")

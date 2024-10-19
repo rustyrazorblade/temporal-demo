@@ -10,6 +10,8 @@ import io.temporal.serviceclient.WorkflowServiceStubs
 import io.temporal.serviceclient.WorkflowServiceStubsOptions
 import io.temporal.worker.WorkerFactory
 import java.net.InetAddress
+import io.temporal.common.converter.CodecDataConverter
+import io.temporal.common.converter.DefaultDataConverter
 
 
 fun main(arguments: Array<String>) {
@@ -57,6 +59,7 @@ fun main(arguments: Array<String>) {
      */
     val options = WorkflowClientOptions.newBuilder()
         .setNamespace("default")
+        .setDataConverter(CodecDataConverter(DefaultDataConverter.newDefaultInstance(), listOf(SampleCodec())))
         .build()
 
     val client = WorkflowClient.newInstance(service, options)

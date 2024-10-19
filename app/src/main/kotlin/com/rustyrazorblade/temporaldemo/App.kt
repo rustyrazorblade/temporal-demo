@@ -7,6 +7,8 @@ import io.temporal.client.WorkflowClient
 import io.temporal.client.WorkflowClientOptions
 import io.temporal.client.WorkflowOptions
 import io.temporal.client.WorkflowStub
+import io.temporal.common.converter.CodecDataConverter
+import io.temporal.common.converter.DefaultDataConverter
 
 import io.temporal.serviceclient.WorkflowServiceStubs
 import java.util.concurrent.TimeUnit
@@ -27,6 +29,7 @@ fun main(args: Array<String>) {
     // Initialize the client options.
     val clientOptions = WorkflowClientOptions.newBuilder()
         .setNamespace("default")
+        .setDataConverter(CodecDataConverter(DefaultDataConverter.newDefaultInstance(), listOf(SampleCodec())))
         .build()
 
     // Create the actual client instance, but it connects lazily.
