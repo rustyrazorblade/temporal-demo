@@ -71,15 +71,18 @@ services:
     container_name: temporal-worker
     depends_on:
       - temporal
+      - temporal-ui
+      - temporal-admin-tools
+      - cassandra
+      - elasticsearch
     image: amazoncorretto:17-alpine
     networks:
       - temporal-network
     volumes:
       - ./:/app
-    command: ["java", "-cp", "/app/app/build/libs/app-all.jar", "com.rustyrazorblade.temporaldemo.WorkerKt"]
-    links:
-      - temporal
-      - temporal-ui
+    tty: true
+    stdin_open: true
+    command: ["java", "-cp", "/app/app/build/libs/app-all.jar", "com.rustyrazorblade.temporaldemo.WorkerKt", "--host", "temporal"]
 networks:
   temporal-network:
     driver: bridge

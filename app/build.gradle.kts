@@ -6,6 +6,8 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     alias(libs.plugins.jvm)
@@ -60,4 +62,9 @@ tasks {
         classpath = sourceSets["main"].runtimeClasspath
         mainClass.set("org.example.WorkerKt")
     }
+}
+
+// this is needed to make grpc happy when ECL is run via the shadowJar
+tasks.named("shadowJar", ShadowJar::class) {
+    mergeServiceFiles()
 }

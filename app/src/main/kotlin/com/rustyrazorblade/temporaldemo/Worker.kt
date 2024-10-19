@@ -1,20 +1,49 @@
 package com.rustyrazorblade.temporaldemo
 
+import com.beust.jcommander.JCommander
+import com.beust.jcommander.Parameter
+import com.rustyrazorblade.temporaldemo.ecl.RollingRestartActivitiesImpl
+import com.rustyrazorblade.temporaldemo.ecl.RollingRestartWorkflowImpl
 import io.temporal.client.WorkflowClient
 import io.temporal.client.WorkflowClientOptions
 import io.temporal.serviceclient.WorkflowServiceStubs
+import io.temporal.serviceclient.WorkflowServiceStubsOptions
 import io.temporal.worker.WorkerFactory
-import com.rustyrazorblade.temporaldemo.ecl.RollingRestartActivitiesImpl
-import com.rustyrazorblade.temporaldemo.ecl.RollingRestartWorkflowImpl
+import java.net.InetAddress
 
-fun main() {
+
+fun main(arguments: Array<String>) {
+
+    val args = object {
+        @Parameter(names = ["--host"], description = "Temporal server host")
+        var host: String = "localhost"
+
+        @Parameter(names = ["--port"], description = "Temporal server port")
+        var port: Int = 7233
+    }
+
+    JCommander.newBuilder().programName("temporal-demo")
+        .addObject(args)
+        .build()
+        .parse(*arguments)
 
     /**
      * Worker needs a service client and factory
      * The worker sets the implementation of the workflow interface
      *
      */
-    val service = WorkflowServiceStubs.newLocalServiceStubs()
+
+    println("Connecting to temporal server: ${args.host}")
+    val address = InetAddress.getByName(args.host)
+    println("Resolved host: ${address.hostAddress}")
+
+    val target = "${args.host}:${args.port}"
+
+
+    val serviceOptions = WorkflowServiceStubsOptions.newBuilder()
+        .setTarget(target)
+        .build()
+    val service = WorkflowServiceStubs.newServiceStubs(serviceOptions)
 
     /**
      * A namespace is an isolated resource, and a client only talks to one namespace.
@@ -43,17 +72,18 @@ fun main() {
     // so for example create a java DB pool here or connect to a C* cluster
     worker.registerActivitiesImplementations(MyActivitiesImpl())
     worker.registerActivitiesImplementations(RollingRestartActivitiesImpl())
-    println("Starting Worker")
+
     for (i in 0..10) {
         try {
-            println("Starting worker")
+            println("Starting worker $target")
             factory.start()
             break
         } catch (e: Exception) {
             println("Error starting worker: $e")
+            e.printStackTrace()
             Thread.sleep(5000)
         }
     }
-    println("Stared, running")
+    println("Running")
 }
 
