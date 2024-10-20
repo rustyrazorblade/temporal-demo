@@ -62,16 +62,36 @@ services:
     environment:
       - TEMPORAL_ADDRESS=temporal:7233
       - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+      - TEMPORAL_CODEC_ENDPOINT=http://localhost:8081
     image: temporalio/ui:${TEMPORAL_UI_VERSION}
     networks:
       - temporal-network
     ports:
       - 8080:8080
+  temporal-codec-server:
+    container_name: temporal-codec-server
+    depends_on:
+      - temporal
+      - temporal-ui
+      - temporal-admin-tools
+      - cassandra
+      - elasticsearch
+    image: amazoncorretto:17-alpine
+    networks:
+      - temporal-network
+    volumes:
+      - ./:/app
+    tty: true
+    stdin_open: true
+    ports:
+      - 8081:8081
+    command: [ "java", "-cp", "/app/codec-server/build/libs/codec-server-all.jar", "com.rustyrazorblade.temporaldemo.codecserver.ApplicationKt"]
   temporal-worker:
     container_name: temporal-worker
     depends_on:
       - temporal
       - temporal-ui
+      - temporal-codec-server
       - temporal-admin-tools
       - cassandra
       - elasticsearch
