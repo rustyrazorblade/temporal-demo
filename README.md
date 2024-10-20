@@ -2,6 +2,8 @@
 
 This is a work in progress.  Commits are pushed up when incremental progress is made, but may not be working correctly.
 
+**Note: You need to use Java 17 to build the jars.**
+
 ## Start the Docker Container
 
 Set environment variables for the containers:
@@ -69,7 +71,7 @@ http://localhost:8000/metrics
 Run the app:
 
 ```shell
-./gradlew run
+./gradlew app:run
 ```
 
 ## Table Structure
@@ -89,3 +91,7 @@ history_tree           queue_metadata
 
 
 ### 
+
+To view the contents of the Elastic Search Index:
+
+http://localhost:9200/temporal_visibility_v1_dev/_search
