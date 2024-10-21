@@ -10,7 +10,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    alias(libs.plugins.jvm)
+    kotlin("jvm")
     id("com.gradleup.shadow") version "8.3.3"
     // Apply the application plugin to add support for building a CLI application in Java.
     application
