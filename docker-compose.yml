@@ -76,16 +76,14 @@ services:
       - temporal-admin-tools
       - cassandra
       - elasticsearch
-    image: amazoncorretto:17-alpine
+    build: .
     networks:
       - temporal-network
-    volumes:
-      - ./:/app
     tty: true
     stdin_open: true
     ports:
       - 8081:8081
-    command: [ "java", "-cp", "/app/codec-server/build/libs/codec-server-all.jar", "com.rustyrazorblade.temporaldemo.codecserver.ApplicationKt"]
+    command: [ "java", "-cp", "/app/codec-server-all.jar", "com.rustyrazorblade.temporaldemo.codecserver.ApplicationKt"]
   temporal-worker:
     container_name: temporal-worker
     depends_on:
@@ -95,14 +93,12 @@ services:
       - temporal-admin-tools
       - cassandra
       - elasticsearch
-    image: amazoncorretto:17-alpine
+    build: .
     networks:
       - temporal-network
-    volumes:
-      - ./:/app
     tty: true
     stdin_open: true
-    command: ["java", "-cp", "/app/app/build/libs/app-all.jar", "com.rustyrazorblade.temporaldemo.WorkerKt", "--host", "temporal"]
+    entrypoint: ["java", "-cp", "/app/app-all.jar", "com.rustyrazorblade.temporaldemo.WorkerKt", "--host", "temporal"]
 networks:
   temporal-network:
     driver: bridge

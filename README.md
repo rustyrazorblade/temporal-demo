@@ -18,16 +18,13 @@ export TEMPORAL_ADMINTOOLS_VERSION=latest
 
 ## Build the Jar
 
-```shell
-gw shadowjar
-```
-
 Bring up the environment.
 
-This starts Cassandra, Elastic Search, temporal server, temporal ui, the temporal worker:
+This builds the project in a docker container, starts Cassandra, Elastic Search, temporal server, temporal ui, 
+the temporal worker, and the temporal codec server:
 
 ```shell
-docker compose up
+docker compose up -d
 ```
 
 Run the demo app.  
@@ -35,7 +32,7 @@ Run the demo app.
 This runs the app that submits a workflow and waits for it to complete.
 
 ```shell
-./gradlew run
+./gradlew app:run
 ```
 
 ## Test the Services 
