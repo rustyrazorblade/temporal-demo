@@ -4,6 +4,13 @@ This is a work in progress.  Commits are pushed up when incremental progress is 
 
 **Note: You need to use Java 17 to build the jars.**
 
+
+## Build the Jar
+
+```shell
+./gradlew shadowjar
+```
+
 ## Start the Docker Container
 
 Set environment variables for the containers:
@@ -16,21 +23,14 @@ export TEMPORAL_VERSION=latest
 export TEMPORAL_ADMINTOOLS_VERSION=latest
 ```
 
-## Build the Jar
-
-```shell
-./gradlew shadowjar
-```
-Bring up the environment.
-
-This builds the project in a docker container, starts Cassandra, Elastic Search, temporal server, temporal ui, 
+This starts Cassandra, Elastic Search, temporal server, temporal ui, 
 the temporal worker, and the temporal codec server:
 
 ```shell
 docker compose up -d 
 ```
 
-This will run the demo app within docker and create some workflows.  You can inspect them in the UI.
+This will run the demo app within docker and create some workflows.  You can inspect them in the UI at http://localhost:8080/
 
 You can run the demo app locally as well, although it's unnecessary for the demo.  That can be done with the following:
 
