@@ -4,6 +4,8 @@ import com.beust.jcommander.JCommander
 import com.beust.jcommander.Parameter
 import com.rustyrazorblade.temporaldemo.ecl.RollingRestartActivitiesImpl
 import com.rustyrazorblade.temporaldemo.ecl.RollingRestartWorkflowImpl
+import com.rustyrazorblade.temporaldemo.ProcessPaymentWorkflowImpl
+import com.rustyrazorblade.temporaldemo.ProcessPaymentActivities
 import io.temporal.client.WorkflowClient
 import io.temporal.client.WorkflowClientOptions
 import io.temporal.serviceclient.WorkflowServiceStubs
@@ -70,11 +72,14 @@ fun main(arguments: Array<String>) {
 
     worker.registerWorkflowImplementationTypes(TestWorkflowImpl::class.java)
     worker.registerWorkflowImplementationTypes(RollingRestartWorkflowImpl::class.java)
+    worker.registerWorkflowImplementationTypes(ProcessPaymentWorkflowImpl::class.java)
+
 
     // if we need a DB connection, we created it first, then pass it to the Activities implementation
     // so for example create a java DB pool here or connect to a C* cluster
     worker.registerActivitiesImplementations(MyActivitiesImpl())
     worker.registerActivitiesImplementations(RollingRestartActivitiesImpl())
+    worker.registerActivitiesImplementations(ProcessPaymentActivitiesImpl())
 
     for (i in 0..10) {
         try {
