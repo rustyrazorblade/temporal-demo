@@ -3,6 +3,9 @@
  */
 package com.rustyrazorblade.temporaldemo
 
+import com.beust.jcommander.JCommander
+import com.beust.jcommander.Parameter
+import io.temporal.api.common.v1.WorkflowExecution
 import io.temporal.client.WorkflowClient
 import io.temporal.client.WorkflowClientOptions
 import io.temporal.client.WorkflowOptions
@@ -11,20 +14,49 @@ import io.temporal.common.converter.CodecDataConverter
 import io.temporal.common.converter.DefaultDataConverter
 
 import io.temporal.serviceclient.WorkflowServiceStubs
+import io.temporal.serviceclient.WorkflowServiceStubsOptions
+import java.math.BigDecimal
+import java.time.Duration
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
+import kotlin.random.Random
 
-class App {
-    val greeting: String
-        get() {
-            return "Hello World!"
-        }
-}
 
-fun main(args: Array<String>) {
+fun main(arguments: Array<String>) {
     // Create an instance that connects to a Temporal Service running on the local
     // machine, using the default port (7233)
     // This doesn't connect yet, we need the options as well.
-    val service = WorkflowServiceStubs.newLocalServiceStubs()
+    val args = object {
+        @Parameter(names = ["--host"], description = "Temporal server host")
+        var host: String = "localhost"
+
+        @Parameter(names = ["--port"], description = "Temporal server port")
+        var port: Int = 7233
+
+        @Parameter(names = ["--wait"], description = "Sleep on startup to allow local server to start")
+        var wait : Long = 0
+
+        val target : String
+            get() = "${this.host}:${this.port}"
+    }
+
+    Thread.sleep(2000)
+    println("Parsing arguments: ${arguments.joinToString()}")
+    Thread.sleep(2000)
+
+    JCommander.newBuilder().programName("temporal-app")
+        .addObject(args)
+        .build()
+        .parse(*arguments)
+
+    val sleep = Duration.ofSeconds(args.wait)
+    Thread.sleep(sleep.toMillis())
+
+    val serviceOptions = WorkflowServiceStubsOptions.newBuilder()
+        .setTarget(args.target)
+        .build()
+
+    val service = WorkflowServiceStubs.newServiceStubs(serviceOptions)
 
     // Initialize the client options.
     val clientOptions = WorkflowClientOptions.newBuilder()
@@ -41,9 +73,7 @@ fun main(args: Array<String>) {
         .setWorkflowId("monkey2").build()
 
 
-    val line = args.getOrElse(0) {
-        "DEFAULT"
-    }
+    val line = "DEFAULT"
 
     println("Starting with $line")
 
@@ -51,10 +81,24 @@ fun main(args: Array<String>) {
     val workflow = client.newWorkflowStub(TestWorkflow::class.java, workflowOptions)
 
     // The data object we're going to use in our workflow.
-    // Best practice is we use an object because
+    // The best practice is we use an object because
     val data = WorkflowDataImpl(line)
 
-    val instance = WorkflowClient.start(workflow::starCoolWorkflow, data)
+    var instance :  WorkflowExecution? = null
+
+    for (i in 0..10) {
+        try {
+            instance = WorkflowClient.start(workflow::starCoolWorkflow, data)
+        } catch (e: Exception) {
+            println("Unable to start workflow, waiting")
+            Thread.sleep(5000)
+        }
+    }
+
+    if (instance == null) {
+        throw Exception("Unable to start workflow")
+    }
+
     println("instance: ${instance.workflowId}")
 
     val untyped = WorkflowStub.fromTyped(workflow)
@@ -70,7 +114,35 @@ fun main(args: Array<String>) {
     }
     println("Done")
 
+    for (j in 0..10) {
 
-    // the workflow is going to create a bunch of activities, and it will take at least a minute to run
-    // so we're going to create it then monitor it
+        // spin up a new thread and wait in the background for the result
+        thread {
+            // the workflow is going to create a bunch of activities, and it will take at least a minute to run
+            // so we're going to create it then monitor it
+            // create several CC transactions and send receipts
+            // for payments we use different workflow options
+            val paymentWorkflowOptions = WorkflowOptions.newBuilder()
+                .setTaskQueue(Shared.DEMO_TASK_QUEUE).build()
+
+            val amount = BigDecimal.valueOf(Random.nextDouble(100.00))
+            val paymentWorkflow = client.newWorkflowStub(ProcessPaymentWorkflow::class.java, paymentWorkflowOptions)
+            val paymentDetails = ProcessPaymentDetailsImpl("1234-1234-1234-1234", amount, "test@test.com")
+            val paymentInstance = WorkflowClient.start(paymentWorkflow::processTransaction, paymentDetails)
+            println("WorkflowID: ${paymentInstance.workflowId}")
+            val untypedPayment = WorkflowStub.fromTyped(paymentWorkflow)
+
+            for (i in 0..10) {
+                try {
+                    val result = untypedPayment.getResult(10, TimeUnit.SECONDS, Int::class.java)
+                    println("RESULT? $result")
+                    break
+                } catch (e: Exception) {
+                    println("OH NO MY SILLY GOOSE $e")
+                }
+            }
+        }.start()
+        // wait a second before starting another workflow
+        Thread.sleep(1000)
+    }
 }

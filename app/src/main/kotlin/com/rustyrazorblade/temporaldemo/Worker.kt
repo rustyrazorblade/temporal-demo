@@ -12,6 +12,7 @@ import io.temporal.worker.WorkerFactory
 import java.net.InetAddress
 import io.temporal.common.converter.CodecDataConverter
 import io.temporal.common.converter.DefaultDataConverter
+import java.time.Duration
 
 
 fun main(arguments: Array<String>) {
@@ -22,12 +23,19 @@ fun main(arguments: Array<String>) {
 
         @Parameter(names = ["--port"], description = "Temporal server port")
         var port: Int = 7233
+
+        @Parameter(names = ["--wait"], description = "Sleep on startup to allow local server to start")
+        var wait : Long = 0
     }
 
-    JCommander.newBuilder().programName("temporal-demo")
+    println("Parsing arguments: ${arguments.joinToString()}")
+    JCommander.newBuilder().programName("temporal-worker")
         .addObject(args)
         .build()
         .parse(*arguments)
+
+    val sleep = Duration.ofSeconds(args.wait)
+    Thread.sleep(sleep.toMillis())
 
     /**
      * Worker needs a service client and factory
@@ -68,13 +76,16 @@ fun main(arguments: Array<String>) {
 
     val worker = factory.newWorker(Shared.DEMO_TASK_QUEUE)
 
+    // a worker can register multiple workflow implementations
     worker.registerWorkflowImplementationTypes(TestWorkflowImpl::class.java)
     worker.registerWorkflowImplementationTypes(RollingRestartWorkflowImpl::class.java)
+    worker.registerWorkflowImplementationTypes(ProcessPaymentWorkflowImpl::class.java)
 
-    // if we need a DB connection, we created it first, then pass it to the Activities implementation
-    // so for example create a java DB pool here or connect to a C* cluster
+    // If we needed a DB connection, we created it first, then pass it to the Activities implementation
+    // For example create a java DB pool here or connect to a C* cluster
     worker.registerActivitiesImplementations(MyActivitiesImpl())
     worker.registerActivitiesImplementations(RollingRestartActivitiesImpl())
+    worker.registerActivitiesImplementations(ProcessPaymentActivitiesImpl())
 
     for (i in 0..10) {
         try {
