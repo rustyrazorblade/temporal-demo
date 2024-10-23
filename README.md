@@ -66,14 +66,6 @@ http://localhost:8080/
 http://localhost:8000/metrics
 
 
-
-
-Run the app:
-
-```shell
-./gradlew app:run
-```
-
 ## Table Structure
 
 Temporal creates the following tables in Cassandra:
@@ -95,3 +87,21 @@ history_tree           queue_metadata
 To view the contents of the Elastic Search Index:
 
 http://localhost:9200/temporal_visibility_v1_dev/_search
+
+
+## The Code
+
+There are 3 main() functions in the codebase:
+
+### app/src/main/kotlin/com/rustyrazorblade/temporaldemo/App.kt
+
+This is the main app that starts workflows.
+
+### app/src/main/kotlin/com/rustyrazorblade/temporaldemo/Worker.kt
+
+This is the Temporal worker that runs the workflows.
+
+### codec-server/src/main/kotlin/com/rustyrazorblade/temporaldemo/codecserver/Application.kt
+
+This is the codec server, which is used by the UI to decrypt values.
+

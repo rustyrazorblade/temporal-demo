@@ -22,12 +22,14 @@ class ProcessPaymentWorkflowImpl : ProcessPaymentWorkflow {
         // here we call a child workflow
         val testWorkflowStub = Workflow.newChildWorkflowStub(TestWorkflow::class.java)
 
-        // this is a blocking call
-        Async.function(testWorkflowStub::starCoolWorkflow, WorkflowDataImpl("data"))
-
-
+        // this is a non-blocking call
+        var promise = Async.function(testWorkflowStub::starCoolWorkflow, WorkflowDataImpl("data"))
 
         processPaymentActivities.sendReceipt(details.getAmount(), details.getEmail())
+
+        // if we don't do this, when the workflow completes, the child workflow will be terminated.
+        promise.get()
+
         return true
     }
 }
