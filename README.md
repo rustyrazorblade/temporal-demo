@@ -30,9 +30,9 @@ the temporal worker, and the temporal codec server:
 docker compose up -d 
 ```
 
-Run the demo app.  
+This will run the demo app within docker and create some workflows.  You can inspect them in the UI.
 
-This runs the app that submits a workflow and waits for it to complete.
+You can run the demo app locally as well, although it's unnecessary for the demo.  That can be done with the following:
 
 ```shell
 ./gradlew app:run

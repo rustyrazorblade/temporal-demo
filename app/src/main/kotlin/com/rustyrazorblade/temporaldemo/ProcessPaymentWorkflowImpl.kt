@@ -2,6 +2,7 @@ package com.rustyrazorblade.temporaldemo
 
 import io.temporal.activity.ActivityOptions
 import io.temporal.common.RetryOptions
+import io.temporal.workflow.Async
 import io.temporal.workflow.Workflow
 import java.time.Duration
 
@@ -17,6 +18,15 @@ class ProcessPaymentWorkflowImpl : ProcessPaymentWorkflow {
         processPaymentActivities.chargeCreditCard(details.getCreditCardNumber(), details.getAmount())
         // TODO update this to use a Transaction type in the return type
         processPaymentActivities.saveTransaction("transaction")
+
+        // here we call a child workflow
+        val testWorkflowStub = Workflow.newChildWorkflowStub(TestWorkflow::class.java)
+
+        // this is a blocking call
+        Async.function(testWorkflowStub::starCoolWorkflow, WorkflowDataImpl("data"))
+
+
+
         processPaymentActivities.sendReceipt(details.getAmount(), details.getEmail())
         return true
     }
